@@ -4,106 +4,226 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Arithmetic Rain Game</title>
+  <!-- Add Google Fonts for a modern look -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Add Inter font for a modern, elegant look -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+  <!-- Add DM Sans for a modern, elegant look -->
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+  <!-- Add Manrope -->
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap" rel="stylesheet">
   <style>
     /*---------------------- Reset & Base ----------------------*/
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body {
-      width: 100%; height: 100%;
-      overflow: hidden;
-      background: linear-gradient(to bottom, #1e3c72, #2a5298);
-      font-family: sans-serif;
+      width: 100vw;
+      height: 100vh;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      background: linear-gradient(135deg, #181a1b 0%, #232526 100%);
+      font-family: 'Manrope', Arial, sans-serif;
+      color: #f3f3f3;
     }
 
     /*---------------------- HUD ----------------------*/
     #hud {
       position: absolute;
-      top: 10px; left: 10px;
-      color: #fff;
-      font-size: 1.2rem;
+      top: 24px; left: 50%;
+      transform: translateX(-50%);
+      color: #f3f3f3;
+      font-size: 1.1rem;
       z-index: 10;
+      background: rgba(36, 37, 38, 0.92);
+      border-radius: 14px;
+      padding: 10px 28px;
+      box-shadow: 0 2px 12px 0 rgba(34,48,70,0.06);
+      font-family: 'Manrope', Arial, sans-serif;
+      display: flex;
+      gap: 2em;
+      align-items: center;
+      border: 1px solid #232526;
+    }
+    #hud span {
+      font-weight: 700;
+      font-size: 1.1em;
+      color: #f3f3f3;
     }
 
     /*---------------------- Instructions Toggle ----------------------*/
     #toggleInstructions {
-      position: absolute;
-      top: 50px; left: 10px;
-      background: rgba(255,255,255,0.3);
-      border: none;
-      padding: 8px 12px;
-      cursor: pointer;
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      left: auto;
+      transform: none;
+      background: #232526;
       color: #fff;
-      font-size: 1rem;
-      border-radius: 4px;
-      z-index: 10;
+      border: 1px solid #353637;
+      border-radius: 8px;
+      font-family: 'Manrope', Arial, sans-serif;
+      font-size: 1.1rem;
+      padding: 10px 22px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px 0 rgba(34,48,70,0.04);
+      transition: background 0.2s, color 0.2s, border 0.2s;
+      z-index: 100;
+    }
+    #toggleInstructions:hover {
+      background: #353637;
+      color: #fff;
+      border-color: #353637;
+    }
+
+    #infoToggle {
+      position: absolute;
+      top: 24px;
+      left: 24px;
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      font-size: 1.5rem;
+      display: flex; align-items: center; justify-content: center;
+      padding: 0;
+      z-index: 100;
+      cursor: pointer;
     }
 
     /*---------------------- Instructions Panel ----------------------*/
     #instructions {
-      position: absolute;
-      top: 90px; left: 10px;
-      width: 220px;
+      position: fixed;
+      top: 68px;
+      right: 24px;
+      left: auto;
+      transform: none;
+      width: 340px;
+      max-width: 95vw;
       max-height: 0;
       overflow: hidden;
-      background: rgba(255,255,255,0.2);
-      backdrop-filter: blur(5px);
-      border-radius: 8px;
-      transition: max-height 0.3s ease;
-      color: #fff;
-      padding: 0 12px;
-      z-index: 10;
+      background: #232526;
+      border: 0 solid #353637;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px 0 rgba(30,60,114,0.18);
+      color: #f3f3f3;
+      padding: 0 22px;
+      z-index: 99;
+      text-align: left;
+      transition: max-height 0.4s cubic-bezier(.4,2,.6,1), padding 0.3s, border-width 0.3s;
     }
     #instructions.expanded {
-      max-height: 300px;
-      padding: 12px;
+      max-height: 320px;
+      padding: 22px;
+      border-width: 1px;
+      border-style: solid;
+    }
+    #instructions p, #instructions ul {
+      font-size: 1.08rem;
+      margin-bottom: 0.5em;
+    }
+    #instructions ul {
+      padding-left: 1.2em;
+      text-align: left;
     }
 
     /*---------------------- Game Over & Message ----------------------*/
     #gameOver {
       position: absolute;
       top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%) scale(1.2);
       color: #fff;
-      font-size: 4rem;
-      z-index: 20;
+      font-size: 2.2rem;
+      z-index: 40;
       display: none;
+      background: linear-gradient(135deg, #232526 0%, #353637 100%);
+      padding: 28px 56px 60px 56px;
+      border-radius: 18px;
+      box-shadow: 0 8px 32px 0 #181a1b55;
+      font-family: 'Manrope', Arial, sans-serif;
+      letter-spacing: 1px;
+      text-shadow: 0 4px 24px #181a1b55;
+      animation: popIn 0.7s cubic-bezier(.4,2,.6,1);
+      text-align: center;
+    }
+    @keyframes popIn {
+      0% {transform: translate(-50%, -50%) scale(0.7);}
+      100% {transform: translate(-50%, -50%) scale(1.2);}
+    }
+    #restartBtn {
+      margin-top: 24px;
+      padding: 0.7em 2.2em 0.7em 1.5em;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 50px;
+      background: linear-gradient(135deg, #353637 0%, #232526 100%);
+      color: #fff;
+      font-family: 'Manrope', Arial, sans-serif;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.7em;
+      box-shadow: 0 2px 12px 0 #181a1b33;
+      transition: background 0.3s, transform 0.15s, box-shadow 0.2s;
+    }
+    #restartBtn:hover {
+      background: linear-gradient(135deg, #232526 0%, #353637 100%);
+      transform: scale(1.06);
+    }
+    #restartBtn svg {
+      width: 1.2em;
+      height: 1.2em;
+      vertical-align: middle;
+      fill: #fff;
     }
     #message {
       position: absolute;
-      top: 40%;
+      top: 18%;
       width: 100%;
       text-align: center;
-      font-size: 2.5rem;
-      color: #fff;
+      font-size: 2.1rem;
+      color: #1e88e5;
       pointer-events: none;
       opacity: 0;
-      transition: opacity 0.5s ease;
+      transition: opacity 0.5s, transform 0.5s;
       z-index: 20;
+      text-shadow: none;
+      font-family: 'Manrope', Arial, sans-serif;
     }
 
     /*---------------------- Answer Buttons ----------------------*/
     #answers {
       position: absolute;
-      bottom: 20px;
+      bottom: 32px;
       width: 100%;
       text-align: center;
       z-index: 10;
+      display: flex;
+      justify-content: center;
+      gap: 1.2em;
     }
     #answers button {
-      width: 25%;
+      width: 110px;
+      min-width: 80px;
       max-width: 150px;
       margin: 5px;
-      padding: 0.8em 1.2em;
-      font-size: 1.4rem;
+      padding: 0.9em 1.1em;
+      font-size: 1.1rem;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       cursor: pointer;
-      background-color: #f0ad4e;
+      background: linear-gradient(135deg, #353637 0%, #232526 100%);
       color: #fff;
-      transition: background-color 0.3s, transform 0.15s;
+      font-family: 'Manrope', Arial, sans-serif;
+      font-weight: 700;
+      box-shadow: 0 2px 12px 0 #181a1b33;
+      transition: background 0.3s, transform 0.15s, box-shadow 0.2s;
+      position: relative;
+      overflow: hidden;
     }
     #answers button:hover {
-      background-color: #ec971f;
-      transform: scale(1.05);
+      background: linear-gradient(135deg, #232526 0%, #353637 100%);
+      transform: scale(1.06);
+      box-shadow: 0 4px 24px 0 #35363755;
     }
 
     /*---------------------- Game Container ----------------------*/
@@ -111,34 +231,169 @@
       width: 100%;
       height: 100%;
       overflow: visible;
+      z-index: 2;
+      position: relative;
+    }
+
+    /* Manual answer input styling */
+    #manualAnswerBox {
+      position: absolute;
+      bottom: 120px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 11;
+      display: flex;
+      gap: 0.5em;
+      align-items: center;
+    }
+    #manualAnswerInput {
+      font-size: 1.05rem;
+      padding: 0.5em 1em;
+      border-radius: 8px;
+      border: 1px solid #b3c6e0;
+      outline: none;
+      width: 120px;
+      box-shadow: 0 2px 8px #22304608;
+      font-family: 'Manrope', Arial, sans-serif;
+      background: #f7fafc;
+      color: #223046;
+    }
+    #manualAnswerBtn {
+      font-size: 1.05rem;
+      padding: 0.5em 1.2em;
+      border-radius: 8px;
+      border: none;
+      background: linear-gradient(135deg, #353637 0%, #232526 100%);
+      color: #fff;
+      font-family: 'Manrope', Arial, sans-serif;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+    }
+    #manualAnswerBtn:hover {
+      background: linear-gradient(135deg, #232526 0%, #353637 100%);
+      transform: scale(1.05);
+    }
+
+    #backgroundParticles {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Info box styles */
+    #infoBox {
+      position: fixed;
+      top: 68px;
+      left: 24px;
+      right: auto;
+      width: 370px;
+      max-width: 95vw;
+      max-height: 0;
+      overflow: hidden;
+      background: #232526;
+      border: 0 solid #353637;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px 0 rgba(30,60,114,0.18);
+      color: #f3f3f3;
+      padding: 0 22px;
+      z-index: 99;
+      text-align: left;
+      font-size: 1.08rem;
+      pointer-events: none;
+      opacity: 0;
+      transition: max-height 0.4s ease-out, padding 0.3s ease-out, border-width 0.3s ease-out, opacity 0.3s ease-out;
+    }
+    #infoBox.expanded {
+      max-height: 500px;
+      padding: 22px;
+      border-width: 1px;
+      border-style: solid;
+      pointer-events: auto;
+      opacity: 1;
+    }
+    #infoBox p, #infoBox ul {
+      margin: 0 0 0.7em 0;
+      line-height: 1.7;
+    }
+    #infoBox ul {
+      padding-left: 1.2em;
+    }
+
+    /* Subtle SVG wave overlay for background motion */
+    #bgWaves {
+      position: fixed;
+      left: 0; top: 0;
+      width: 100vw; height: 100vh;
+      z-index: 1;
+      pointer-events: none;
+      opacity: 0.18;
+      mix-blend-mode: lighten;
+    }
+
+    /* Use Manrope everywhere for a professional look */
+    #hud, #manualAnswerInput, #manualAnswerBtn, #toggleInstructions, #infoToggle, #infoBox, #instructions, #gameOver, #message, #answers button {
+      font-family: 'Manrope', Arial, sans-serif !important;
     }
   </style>
 </head>
 <body>
-  <div id="hud">
-    Score: <span id="score">0</span> |
-    Lives: <span id="lives">3</span>
+  <!-- Background effect canvas -->
+  <canvas id="backgroundParticles"></canvas>
+  <!-- Info toggle and box (left) -->
+  <button id="infoToggle" title="About this game">ⓘ</button>
+  <div id="infoBox">
+    <p>
+      <b>Arithmetic Rain Game</b> is a single-file HTML5 brain-training game inspired by the classic "Raindrops" game from Lumosity. It was created by <b>Naadir</b> in 2024, with the help of <b>GPT-4</b> (OpenAI's language model).
+    </p>
+    <p>
+      <b>Built with:</b>
+      <ul>
+        <li>Three.js (for rendering animated falling arithmetic drops)</li>
+        <li>Vanilla JavaScript, HTML5, and CSS3 (no frameworks)</li>
+      </ul>
+    </p>
   </div>
-
+  <!-- Instructions toggle and box (right) -->
   <button id="toggleInstructions">▶ Instructions</button>
   <div id="instructions">
     <p>Catch the drops by clicking the correct answer!</p>
     <ul>
-	  <br>
+      <br>
       Solve the arithmetic before the drop hits the bottom.
-	  </br>
-	  <br>
-      Correct → +1 score; Wrong or timeout → −1 life.
-	  </br>
-	  <br>
+      </br>
+      <br>
+      Correct → +1 score
+      </br>
+      <br>
+      Wrong or timeout → −1 life.
+      </br>
+      <br>
       Game ends at 0 lives.
-	<br>
-	</br>
+      <br>
+      </br>
     </ul>
   </div>
-
-  <div id="gameOver">Game Over</div>
+  <div id="hud">
+    <span>⭐ Score: <span id="score">0</span></span>
+    <span>🏆 High: <span id="highscore">0</span></span>
+    <span>❤️ Lives: <span id="lives">3</span></span>
+  </div>
+  <div id="gameOver">
+    Game Over
+    <br>
+    <button id="restartBtn" title="Start Again">
+      <svg viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6a6 6 0 1 1-6-6z"/></svg>
+      Start Again
+    </button>
+  </div>
   <div id="message"></div>
+  <!-- Manual answer input box (now above answer buttons) -->
+  <div id="manualAnswerBox">
+    <input id="manualAnswerInput" type="number" placeholder="Type..." autocomplete="off" />
+    <button id="manualAnswerBtn">Enter</button>
+  </div>
   <div id="answers"></div>
   <div id="gameContainer"></div>
 
@@ -172,8 +427,9 @@
         1, 1000
       );
       camera.position.z = 10;
-      renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
       renderer.setSize(gameWidth, gameHeight);
+      renderer.setClearColor(0x000000, 0); // Make background transparent
       document.getElementById("gameContainer").appendChild(renderer.domElement);
 
       // create initial drops
@@ -222,35 +478,59 @@
       const size = problem.canvas.width;
       ctx.clearRect(0, 0, size, size);
 
-      // circle body
+      // Subtle radial gradient for depth (less white)
+      const grad = ctx.createRadialGradient(
+        size/2, size/2, size/3,
+        size/2, size/2, size/2 - 5
+      );
+      grad.addColorStop(0, "#b3e5fc");
+      grad.addColorStop(0.7, "#64b5f6");
+      grad.addColorStop(1, "#1976d2");
+
       ctx.beginPath();
       ctx.arc(size/2, size/2, size/2 - 5, 0, Math.PI * 2);
-      ctx.fillStyle = "#80dfff";
+      ctx.closePath();
+      ctx.fillStyle = grad;
+      ctx.shadowColor = "#64b5f6";
+      ctx.shadowBlur = 7;
       ctx.fill();
-      ctx.lineWidth   = 3;
+
+      // More subtle shine
+      ctx.shadowBlur = 0;
+      ctx.beginPath();
+      ctx.ellipse(size/2 - size/6, size/2 - size/6, size/13, size/9, Math.PI/6, 0, 2*Math.PI);
+      ctx.fillStyle = "rgba(255,255,255,0.18)";
+      ctx.fill();
+
+      // Outline
+      ctx.lineWidth = 2;
       ctx.strokeStyle = "#fff";
+      ctx.globalAlpha = 0.7;
       ctx.stroke();
+      ctx.globalAlpha = 1;
 
       // arithmetic text
-      ctx.fillStyle    = "#000";
-      ctx.font         = "28px Arial";
+      ctx.save();
+      ctx.font         = "bold 28px 'Manrope', Arial, sans-serif";
       ctx.textAlign    = "center";
       ctx.textBaseline = "middle";
+      ctx.fillStyle    = "#222";
+      ctx.shadowColor  = "#fff";
+      ctx.shadowBlur   = 2;
       ctx.fillText(problem.text, size/2, size/2);
+      ctx.restore();
 
-      // timer arc
+      // timer arc (around drop)
       const progress = Math.max(0, problem.timeLeft) / problem.totalTime;
+      ctx.save();
       ctx.beginPath();
-      ctx.arc(
-        size/2, size/2,
-        size/2 - 3,
-        -Math.PI/2,
-        -Math.PI/2 + progress * 2 * Math.PI,
-        false
-      );
-      ctx.lineWidth   = 4;
-      ctx.strokeStyle = "#ff0000";
+      ctx.arc(size/2, size/2, size/2 - 6, -Math.PI/2, -Math.PI/2 + progress * 2 * Math.PI, false);
+      ctx.lineWidth   = 5;
+      ctx.strokeStyle = "#ff4081";
+      ctx.shadowColor = "#ff4081";
+      ctx.shadowBlur = 8;
       ctx.stroke();
+      ctx.restore();
 
       problem.texture.needsUpdate = true;
     }
@@ -410,6 +690,116 @@
         p.totalTime = (p.y - (-gameHeight/2)) / p.speed;
         p.timeLeft  = Math.min(p.timeLeft, p.totalTime);
       });
+    });
+
+    // ---- Manual Answer Input ----
+    document.addEventListener("DOMContentLoaded", () => {
+      const input = document.getElementById("manualAnswerInput");
+      const btn = document.getElementById("manualAnswerBtn");
+      // On Enter key
+      input.addEventListener("keydown", e => {
+        if (e.key === "Enter") {
+          submitManualAnswer();
+        }
+      });
+      // On button click
+      btn.addEventListener("click", submitManualAnswer);
+      function submitManualAnswer() {
+        const val = parseInt(input.value, 10);
+        if (!isNaN(val)) {
+          checkAnswer(val);
+          input.value = "";
+        }
+      }
+    });
+
+    // ---- Info Box Toggle ----
+    document.addEventListener("DOMContentLoaded", () => {
+      const infoToggle = document.getElementById("infoToggle");
+      const infoBox = document.getElementById("infoBox");
+      // Ensure infoBox is collapsed and hidden on load
+      infoBox.classList.remove("expanded");
+      infoToggle.addEventListener("click", () => {
+        const open = infoBox.classList.toggle("expanded");
+        infoToggle.setAttribute("aria-expanded", open);
+      });
+    });
+
+    // ---- Background Particle Effect ----
+    // Simple floating bubbles
+    const particleCanvas = document.getElementById('backgroundParticles');
+    let particles = [];
+    function resizeParticles() {
+      particleCanvas.width = window.innerWidth;
+      particleCanvas.height = window.innerHeight;
+    }
+    function initParticles() {
+      resizeParticles();
+      particles = [];
+      for (let i = 0; i < 40; i++) {
+        particles.push({
+          x: Math.random() * particleCanvas.width,
+          y: Math.random() * particleCanvas.height,
+          r: 10 + Math.random() * 30,
+          d: 0.5 + Math.random() * 1.5,
+          a: Math.random() * Math.PI * 2
+        });
+      }
+    }
+    function animateParticles() {
+      const ctx = particleCanvas.getContext('2d');
+      ctx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
+      for (let p of particles) {
+        ctx.save();
+        ctx.globalAlpha = 0.10 + 0.10 * Math.sin(Date.now()/1000 + p.a);
+        const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r);
+        grad.addColorStop(0, "#fff");
+        grad.addColorStop(1, "#90caf9");
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, 2 * Math.PI);
+        ctx.fillStyle = grad;
+        ctx.fill();
+        ctx.restore();
+        // Animate
+        p.y -= p.d;
+        if (p.y + p.r < 0) {
+          p.y = particleCanvas.height + p.r;
+          p.x = Math.random() * particleCanvas.width;
+        }
+      }
+      requestAnimationFrame(animateParticles);
+    }
+    window.addEventListener('resize', () => {
+      resizeParticles();
+      initParticles();
+    });
+    // Start particles after DOM loaded
+    document.addEventListener("DOMContentLoaded", () => {
+      initParticles();
+      animateParticles();
+    });
+
+    // Animate SVG waves for background motion
+    function animateWaves() {
+      const t = Date.now() / 1200;
+      const wave1 = document.getElementById('wave1');
+      const wave2 = document.getElementById('wave2');
+      // Animate the Q control points for a gentle wave
+      wave1.setAttribute('d',
+        `M0,800 Q${360 + 40*Math.sin(t)},${700 + 20*Math.cos(t/2)} ` +
+        `${720 + 40*Math.cos(t/2)},${800 + 20*Math.sin(t)} ` +
+        `T1440,800 V900 H0Z`
+      );
+      wave2.setAttribute('d',
+        `M0,850 Q${360 + 60*Math.cos(t/1.5)},${750 + 30*Math.sin(t/2)} ` +
+        `${720 + 60*Math.sin(t/2)},${850 + 30*Math.cos(t/1.5)} ` +
+        `T1440,850 V900 H0Z`
+      );
+      requestAnimationFrame(animateWaves);
+    }
+    document.addEventListener("DOMContentLoaded", () => {
+      animateWaves();
+      // ... existing DOMContentLoaded code ...
     });
 
     // start
