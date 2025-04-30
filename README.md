@@ -50,9 +50,4 @@ A responsive, browser-based educational game where arithmetic problems fall like
 
 - `index.html` – Main game file containing HTML, CSS, and JavaScript.
 
----
-
-## License
-
-This project is released under the MIT License. Feel free to use, modify, and distribute!
 
